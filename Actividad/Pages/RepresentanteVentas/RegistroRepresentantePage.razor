@@ -5,6 +5,8 @@
 
 <button @onclick="nuevo" class="btn-primary">Nuevo</button>
 
+<SearchRepresentante/>
+
 @if (lista != null && lista.Count != 0)
 {
     <table class="table">
@@ -48,21 +50,34 @@
     public List<RepresentanteListCLS> lista { get; set; } = new List<RepresentanteListCLS>();
     protected override Task OnInitializedAsync()
     {
+        empleadoService.OnSearch += filtrar;
+
         listarEmpleados();
         return base.OnInitializedAsync();
     }
+
+    private Task filtrar(string nombre)
+    {
+        lista = empleadoService.filtrarRepresentantes(nombre);
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
     private void listarEmpleados()
     {
         lista = empleadoService.listarRepresentantes();
     }
+
     private void nuevo()
     {
         navigationManager.NavigateTo("/formrepresentante");
     }
+
     private void recuperarEmpleado(int Num_Empl)
     {
         navigationManager.NavigateTo("/formrepresentante/edit/" + Num_Empl);
     }
+
     private void eliminarEmpleado(int Num_Empl)
     {
         empleadoService.eliminarEmpleado(Num_Empl);

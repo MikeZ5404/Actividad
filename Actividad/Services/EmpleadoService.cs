@@ -4,6 +4,16 @@ namespace Actividad.Services
 {
     public class EmpleadoService
     {
+        public event Func<string, Task> OnSearch = delegate { return Task.CompletedTask; };
+
+        public async Task notificarBusqueda(string nombrerepresentante)
+        {
+            if (OnSearch != null)
+            {
+                await OnSearch.Invoke(nombrerepresentante);
+            }
+        }
+
         private List<RepresentanteListCLS> lista;
         private JefeRepresentanteService jefeService;
         private SucursalService sucursalService;
@@ -19,6 +29,21 @@ namespace Actividad.Services
         {
             return lista;
         }
+
+        public List<RepresentanteListCLS> filtrarRepresentantes(string nombrerepresentante)
+        {
+            List<RepresentanteListCLS> l = listarRepresentantes();
+            if(nombrerepresentante == "")
+            {
+                return l;
+            }
+            else
+            {
+                List<RepresentanteListCLS> listafiltrada = l.Where(p => p.Nombre.ToUpper().Contains(nombrerepresentante.ToUpper())).ToList();
+                return listafiltrada;
+            }
+        }
+
         public void eliminarEmpleado(int Num_Empl)
         {
             var listaQueda = lista.Where(p => p.Num_Empl != Num_Empl).ToList();
