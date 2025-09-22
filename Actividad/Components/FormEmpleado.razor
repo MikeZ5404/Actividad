@@ -101,11 +101,8 @@
 
     private void Guardar()
     {
-        if(Nombre == "Agregar Representante")
-        {
-            empleadoService.guardarRepresentante(representante);
-            navigationManager.NavigateTo("registro");
-        }
+        empleadoService.guardarRepresentante(representante);
+        navigationManager.NavigateTo("registro");
     }
 
     private void Regresar()

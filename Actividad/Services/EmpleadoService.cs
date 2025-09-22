@@ -1,4 +1,5 @@
 ﻿using Actividad.Entities;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Actividad.Services
 {
@@ -55,8 +56,12 @@ namespace Actividad.Services
             var obj = lista.Where(p => p.Num_Empl == Num_Empl).FirstOrDefault();
             if (obj != null)
             {
-                return new RepresentantesVentasCLS { Num_Empl = obj.Num_Empl, Nombre = obj.Nombre, Cargo = obj.Cargo,
-                    Edad = obj.Edad, FechaContrato = obj.FechaContrato, Cuota = obj.Cuota, Ventas = obj.Ventas,
+                return new RepresentantesVentasCLS { 
+                    Num_Empl = obj.Num_Empl, 
+                    Nombre = obj.Nombre, Cargo = obj.Cargo,
+                    Edad = obj.Edad, 
+                    FechaContrato = obj.FechaContrato, 
+                    Cuota = obj.Cuota, Ventas = obj.Ventas,
                     idJefe = jefeService.obtenerIdJefe(obj.nombreJefe),
                     idSucursal = sucursalService.obtenerIdSucursal(obj.nombreSucursal)};
             }
@@ -66,14 +71,64 @@ namespace Actividad.Services
             }
         }
 
+        public int obtenerIdEmpleado(string Nombre)
+        {
+            var obj = lista.Where(p => p.Nombre == Nombre).FirstOrDefault();
+            if (obj == null)
+            {
+                return 0;
+            }
+            else
+            {
+                return obj.Num_Empl;
+            }
+        }
+        public string obtenerNombreEmpleado(int Num_Empl)
+        {
+            var obj = lista.Where(p => p.Num_Empl == Num_Empl).FirstOrDefault();
+            if (obj == null)
+            {
+                return "";
+            }
+            else
+            {
+                return obj.Nombre;
+            }
+        }
+
         public void guardarRepresentante(RepresentantesVentasCLS representante)
         {
-            int Num_Empl = lista.Select(p => p.Num_Empl).Max() + 1;
-            lista.Add(new RepresentanteListCLS { Num_Empl = Num_Empl, Nombre = representante.Nombre,
-                Edad = representante.Edad, Cargo = representante.Cargo, FechaContrato = representante.FechaContrato, 
-                Cuota = representante.Cuota, Ventas = representante.Ventas,
-                nombreJefe = jefeService.obtenerNombreJefe(representante.idJefe),
-                nombreSucursal = sucursalService.obtenerNombreSucursal(representante.idSucursal)});
+            if (representante.Num_Empl == 0)
+            {
+                int Num_Empl = lista.Select(p => p.Num_Empl).Max() + 1;
+                lista.Add(new RepresentanteListCLS
+                {
+                    Num_Empl = Num_Empl,
+                    Nombre = representante.Nombre,
+                    Edad = representante.Edad,
+                    Cargo = representante.Cargo,
+                    FechaContrato = representante.FechaContrato,
+                    Cuota = representante.Cuota,
+                    Ventas = representante.Ventas,
+                    nombreJefe = jefeService.obtenerNombreJefe(representante.idJefe),
+                    nombreSucursal = sucursalService.obtenerNombreSucursal(representante.idSucursal)
+                });
+            }
+            else
+            {
+                var obj = lista.Where(p => p.Num_Empl == representante.Num_Empl).FirstOrDefault();
+                if (obj != null)
+                {
+                    obj.Nombre = representante.Nombre;
+                    obj.Edad = representante.Edad;
+                    obj.Cargo = representante.Cargo;
+                    obj.FechaContrato = representante.FechaContrato;
+                    obj.Cuota = representante.Cuota;
+                    obj.Ventas = representante.Ventas;
+                    obj.nombreJefe = jefeService.obtenerNombreJefe(representante.idJefe);
+                    obj.nombreSucursal = sucursalService.obtenerNombreSucursal(representante.idSucursal);
+                }
+            }
         }
     }
 }
